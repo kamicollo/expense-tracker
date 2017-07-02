@@ -68,6 +68,8 @@ delete_rows_after_total = function(data, total_row) {
     #find the row (returns a list with row # per page - ie. all empty but one)
     last_row = sapply(data, function(x) {which(x[, details %like% total_row])})
     
+    
+    
     #make sure to return null if last_row was there already or a subset of rows if found now
     data = lapply(
         seq(1, length(data)), 

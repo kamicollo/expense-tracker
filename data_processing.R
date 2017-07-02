@@ -19,10 +19,14 @@ preprocessData = function(PDFoutput) {
     if (length(entries) > 0) {
         all_pages[, card := card[1], by = cumsum(!is.na(card))]
         all_pages[, card := na.locf(card, fromLast = T)]
+        subtotals = all_pages[entries,][!is.na(amountCHF), list(card, amountCHF)]
         all_pages = all_pages[-entries]
     } else {
         all_pages[, card := "unknown card #"]
     }
+    
+    #set metadata
+    total = all_pages[details == "Total balance in our favour", amountCHF]
     
     #exclude subtotals (TODO - consider checking data against them)
     all_pages = all_pages[!(details == "Total carried forward" | details == "Card carried forward")]
@@ -34,6 +38,10 @@ preprocessData = function(PDFoutput) {
     
     #process metadata
     all_pages = process_metadata(all_pages)
+    
+    setattr(all_pages, "total", total)
+    setattr(all_pages, "cardtotals", subtotals)
+    return(all_pages)
 }
 
 
